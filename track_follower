@@ -1,0 +1,26 @@
+from pyjop import *
+
+# Connect to the current SimEnv
+SimEnv.connect()
+
+# Create references to entities in the SimEnv
+drone = ServiceDrone.first()
+if drone is None:
+    raise ValueError("Failed to find a ServiceDrone.")
+
+while SimEnv.run_main():
+    dist_left = drone.get_distance_left()
+    dist_right = drone.get_distance_right()
+
+    if dist_left > 1.5:
+        drone.apply_thruster_impulse_left(20)
+    else:
+        drone.set_thruster_force_left(40)
+
+    if dist_right > 1.5:
+        drone.apply_thruster_impulse_right(20)
+    else:
+        drone.set_thruster_force_right(40)
+
+# Cleanup and disconnect
+SimEnv.disconnect()
