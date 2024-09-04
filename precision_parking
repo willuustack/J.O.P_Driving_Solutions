@@ -1,0 +1,17 @@
+#import the joy of programming python module pyjop
+from pyjop import *
+#connect to the current SimEnv
+SimEnv.connect()
+
+drone = ServiceDrone.first()
+scanner = RangeFinder.first()
+
+while SimEnv.run_main():
+    dist = scanner.get_distance()
+    dist_remain = dist - 3
+    drone.set_thruster_force_left(dist_remain * 100)
+    drone.set_thruster_force_right(dist_remain * 100)
+
+
+#cleanup close code
+SimEnv.disconnect()
