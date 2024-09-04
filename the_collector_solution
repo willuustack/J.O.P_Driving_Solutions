@@ -1,0 +1,33 @@
+from pyjop import *
+SimEnv.connect()
+
+env = SimEnvManager.first()
+env.reset()
+
+drone = ServiceDrone.first()
+drone.set_fov(75)
+
+mid = 11
+h = 12
+speed = 200
+
+while SimEnv.run_main():
+        img = drone.get_camera_frame()
+        midlane = img[mid-h:mid+h, :, :]
+        midlaneR = img[:, :, 0]>254
+        midlaneG = img[:, :, 1]>254
+        midlaneG[midlaneR] = 0
+        midlaneG = midlaneG.max(axis = 0)
+        
+        if midlaneG.any() == False:
+            drone.set_thruster_force_left(speed/4)
+            drone.set_thruster_force_right(-speed/4)
+            continue
+        
+        idx = midlaneG.nonzero()[0]
+        midmin = min(idx, key=lambda x: abs(x-128)) - 128
+        
+        drone.set_thruster_force_left(speed + midmin/2)
+        drone.set_thruster_force_right(speed - midmin/2)
+
+SimEnv.disconnect()
