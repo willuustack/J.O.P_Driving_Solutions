@@ -1,0 +1,20 @@
+#import the joy of programming python module pyjop
+from pyjop import *
+#connect to the current SimEnv
+SimEnv.connect()
+env = SimEnvManager.first()
+env.reset()
+
+car = RaceCar.first()
+car.set_throttle(1000)
+car.set_gear(1)
+sleep(0.5)
+car.apply_boost()
+
+while SimEnv.run_main():   
+    gear = car.get_gear()
+    if car.get_rpm() > 6000:
+        car.set_gear(gear + 1), car.set_throttle(1000), car.apply_boost()
+        
+#cleanup close code
+SimEnv.disconnect()
